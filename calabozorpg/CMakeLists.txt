@@ -32,11 +32,16 @@ set(FORMS
     forms/mainwindow.ui
 )
 
-# Agregamos todos los archivos al ejecutable
+# Define the target name and source files explicitly
 qt_add_executable(calabozorpg
-    ${SOURCES}
-    ${HEADERS}
-    ${FORMS}
+    main.cpp
+    mainwindow.cpp
+    mainwindow.h
+    jugador.cpp
+    jugador.h
+    enemigo.cpp
+    enemigo.h
+    mainwindow.h mainwindow.cpp mainwindow.ui
 )
 
 # Enlazamos las librerías necesarias
