@@ -1,32 +1,35 @@
 #include "save.h"
-#include <QJsonArray>
-#include <QJsonDocument>
-#include <QFile>
+#include "game.h"
+#include <QJsonObject>
 
-QJsonObject Save::toJson(const Game& g) {
+namespace Save {
+
+QJsonObject toJson(const Game &g) {
     QJsonObject o;
-    o["floor"] = g.currentFloor;
-    o["rollsLeft"] = g.rollsLeft;
-    QJsonObject p; p["r"]=g.pos.row; p["c"]=g.pos.col; o["pos"]=p;
+    o["floor"]    = g.getFloor();
+    o["hp"]       = g.getPlayerHP();
+    o["maxHp"]    = g.getPlayerMaxHP();
+    o["atk"]      = g.getPlayerATK();
+    o["rollsLeft"]= g.getRemainingRolls();
+
+    Pos p = g.getPlayerPos();  // ahora Pos existe en game.h
+    QJsonObject posJson;
+    posJson["r"] = p.row;
+    posJson["c"] = p.col;
+    o["pos"] = posJson;
+
     return o;
 }
-void Save::fromJson(Game& g, const QJsonObject& o) {
-    g.currentFloor = o["floor"].toInt(1);
-    g.rollsLeft = o["rollsLeft"].toInt(10);
-    auto p = o["pos"].toObject();
-    g.pos = { p["r"].toInt(0), p["c"].toInt(0) };
+
+void fromJson(Game &g, const QJsonObject &o) {
+    g.setFloor(o["floor"].toInt(1));
+    g.setPlayerHP(o["hp"].toInt(3));
+    g.setPlayerMaxHP(o["maxHp"].toInt(3));
+    g.setPlayerATK(o["atk"].toInt(1));
+    g.setRemainingRolls(o["rollsLeft"].toInt(10));
+
+    QJsonObject p = o["pos"].toObject();
+    g.setPlayerPos({ p["r"].toInt(0), p["c"].toInt(0) });
 }
-bool Save::saveToFile(const Game& g, const QString& path) {
-    QFile f(path);
-    if (!f.open(QIODevice::WriteOnly)) return false;
-    f.write(QJsonDocument(toJson(g)).toJson());
-    return true;
-}
-bool Save::loadFromFile(Game& g, const QString& path) {
-    QFile f(path);
-    if (!f.open(QIODevice::ReadOnly)) return false;
-    auto doc = QJsonDocument::fromJson(f.readAll());
-    if (!doc.isObject()) return false;
-    fromJson(g, doc.object());
-    return true;
-}
+
+} // namespace Save
