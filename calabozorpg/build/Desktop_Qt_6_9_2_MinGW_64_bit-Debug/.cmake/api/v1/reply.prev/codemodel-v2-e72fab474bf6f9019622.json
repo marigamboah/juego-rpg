@@ -1,0 +1,78 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "calabozorpg",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "calabozorpg::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-calabozorpg-Debug-d298012eef4f924fd6f1.json",
+					"name" : "calabozorpg",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "calabozorpg_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-calabozorpg_autogen-Debug-b6d3da4c3438ab692dad.json",
+					"name" : "calabozorpg_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "calabozorpg_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-calabozorpg_autogen_timestamp_deps-Debug-e00b543cda26076d6477.json",
+					"name" : "calabozorpg_autogen_timestamp_deps",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/Miranda/Desktop/juego-rpg/calabozorpg/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug",
+		"source" : "C:/Users/Miranda/Desktop/juego-rpg/calabozorpg"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 7
+	}
+}

@@ -1,0 +1,14 @@
+# ninja log v6
+8	94	7806472679932916	C:/Users/Miranda/Desktop/juego-rpg/calabozorpg/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/CMakeFiles/cmake.verify_globs	49b3ba441ed91345
+23	843	7806478407500130	calabozorpg_autogen/timestamp	98b5907395087112
+9	43	7806478398097991	CMakeFiles/clean.additional	baedbe210acaa455
+43	65	7806478398445813	clean	577b940aee94fbd7
+23	843	7806478407500130	calabozorpg_autogen/mocs_compilation.cpp	98b5907395087112
+23	843	7806478407500130	C:/Users/Miranda/Desktop/juego-rpg/calabozorpg/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/calabozorpg_autogen/mocs_compilation.cpp	98b5907395087112
+23	843	7806478407500130	C:/Users/Miranda/Desktop/juego-rpg/calabozorpg/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/calabozorpg_autogen/timestamp	98b5907395087112
+1047	3446	7806478410206306	CMakeFiles/calabozorpg.dir/enemigo.cpp.obj	72d221c369b311ff
+990	3347	7806478409645427	CMakeFiles/calabozorpg.dir/jugador.cpp.obj	5994f2b420ac0fdd
+844	3581	7806478408176835	CMakeFiles/calabozorpg.dir/calabozorpg_autogen/mocs_compilation.cpp.obj	f0cc5e25ee342d0b
+873	3759	7806478408464215	CMakeFiles/calabozorpg.dir/main.cpp.obj	569cc757a7ccc6d0
+926	4329	7806478408999966	CMakeFiles/calabozorpg.dir/mainwindow.cpp.obj	a8764f8996cb5080
+4329	4616	7806478443034312	calabozorpg.exe	8c8a8bab89a35bd7

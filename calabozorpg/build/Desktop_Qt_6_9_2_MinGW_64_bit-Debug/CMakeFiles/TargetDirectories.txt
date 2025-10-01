@@ -1,0 +1,5 @@
+C:/Users/Miranda/Desktop/juego-rpg/calabozorpg/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/CMakeFiles/calabozorpg.dir
+C:/Users/Miranda/Desktop/juego-rpg/calabozorpg/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/CMakeFiles/edit_cache.dir
+C:/Users/Miranda/Desktop/juego-rpg/calabozorpg/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/CMakeFiles/rebuild_cache.dir
+C:/Users/Miranda/Desktop/juego-rpg/calabozorpg/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/CMakeFiles/calabozorpg_autogen_timestamp_deps.dir
+C:/Users/Miranda/Desktop/juego-rpg/calabozorpg/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/CMakeFiles/calabozorpg_autogen.dir
