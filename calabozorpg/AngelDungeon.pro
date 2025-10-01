@@ -5,8 +5,11 @@ TARGET = AngelDungeon
 
 INCLUDEPATH += engine
 
-SOURCES +=         main.cpp         ui/mainwindow.cpp         engine/items.cpp         engine/character.cpp         engine/enemy.cpp         engine/floor.cpp         engine/game.cpp         engine/save.cpp
+SOURCES +=         main.cpp         ui/mainwindow.cpp         engine/items.cpp         engine/character.cpp         engine/enemy.cpp         engine/floor.cpp         engine/game.cpp         engine/save.cpp \
+    ui/mainwindow.cpp
 
-HEADERS +=         ui/mainwindow.h         engine/types.h         engine/items.h         engine/character.h         engine/enemy.h         engine/floor.h         engine/game.h         engine/save.h
+HEADERS +=         ui/mainwindow.h         engine/types.h         engine/items.h         engine/character.h         engine/enemy.h         engine/floor.h         engine/game.h         engine/save.h \
+    ui/mainwindow.h
 
-FORMS +=         ui/mainwindow.ui
+FORMS +=         ui/mainwindow.ui \
+    ui/mainwindow.ui

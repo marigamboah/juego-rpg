@@ -1,44 +1,16 @@
-#pragma once
-#include "floor.h"
-#include "character.h"
-#include "enemy.h"
-#include "items.h"
-#include <QRandomGenerator>
-#include <QStringList>
+// Dentro de la clase Game (public:)
+int getFloor() const;
+int getPlayerHP() const;
+int getPlayerMaxHP() const;
+int getPlayerATK() const;
+int getRemainingRolls() const;
 
-struct CombatLog { QStringList lines; bool heroDied{false}; bool enemyDied{false}; };
-enum class EventKind { None, Enemy, Chest, Save, Tavern, ExitReached, GameOver };
+std::pair<int,int> rollDice();
+TurnResult playerMove(const QString &dir1, const QString &dir2);
 
-struct TurnResult {
-    bool moved{false};
-    Pos finalPos{};
-    EventKind event{EventKind::None};
-    CombatLog combat;
-    QStringList messages;
-};
+Tile getTile(int row, int col) const;
 
-class Game {
-public:
-    Player hero;
-    int currentFloor{1};
-    int rollsLeft{10};
-    Pos pos{Floor::entry()};
-    Floor floor{currentFloor};
+bool save(const std::string &filename);
+bool load(const std::string &filename);
 
-    void newFloor();
-    TurnResult applyTurn(int d1, Dir dir1, int d2, Dir dir2);
-
-    static int d6();
-    static bool canMove(const Pos& from, Dir dir, int steps, Pos& out);
-    void setSeed(quint32 seed);
-
-private:
-    void generateFloorContents();
-    void place(Tile t, int count);
-    void resolveFinalTile(TurnResult& tr);
-    CombatLog startCombat(Enemy enemy);
-    void lootChest(TurnResult& tr);
-    void visitTavern(TurnResult& tr);
-    void hitSave(TurnResult& tr);
-    int randInt(int a, int b);
-};
+void revealAll();
