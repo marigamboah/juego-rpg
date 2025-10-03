@@ -1,7 +1,10 @@
-#pragma once
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
+
 #include <QMainWindow>
-#include <QString>
-#include "engine/game.h"   // aquí viene TurnResult, TileType, etc.
+#include <QString>          // usado por log(const QString&)
+#include "engine/types.h"   // para TurnResult, TileType (evita dependencias implícitas)
+#include "engine/game.h"    // Game
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -10,7 +13,7 @@ QT_END_NAMESPACE
 class MainWindow : public QMainWindow {
     Q_OBJECT
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
+    explicit MainWindow(QWidget *parent=nullptr);
     ~MainWindow();
 
 private slots:
@@ -22,15 +25,16 @@ private slots:
 
 private:
     void setupBoard();
-    void paintCell(int row, int col);
+    void paintCell(int r,int c);
     void paintBoard();
     void updateHUD();
-    void log(const QString &msg);
+    void log(const QString& msg);
+    void handleTurnResult(TurnResult res);
     void revealAllTiles();
 
-    // ⬇️ ESTA ERA LA QUE FALTABA
-    void handleTurnResult(const TurnResult &res);
-
-    Ui::MainWindow *ui;
+private:
+    Ui::MainWindow *ui{nullptr};
     Game game;
 };
+
+#endif // MAINWINDOW_H

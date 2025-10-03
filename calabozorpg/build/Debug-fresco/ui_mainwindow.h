@@ -12,14 +12,16 @@
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QComboBox>
-#include <QtWidgets/QDockWidget>
-#include <QtWidgets/QFrame>
+#include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QMainWindow>
+#include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QSpacerItem>
+#include <QtWidgets/QStatusBar>
 #include <QtWidgets/QTableWidget>
 #include <QtWidgets/QTextEdit>
 #include <QtWidgets/QVBoxLayout>
@@ -31,203 +33,194 @@ class Ui_MainWindow
 {
 public:
     QWidget *centralwidget;
-    QHBoxLayout *horizontalLayout;
+    QHBoxLayout *hLayout;
     QTableWidget *table;
-    QWidget *panel;
-    QVBoxLayout *verticalLayout;
-    QLabel *label;
-    QLabel *label1;
+    QVBoxLayout *vRight;
+    QGridLayout *gridStats;
+    QLabel *labelFloor;
     QLabel *lblFloor;
-    QLabel *label2;
+    QLabel *labelHP;
     QLabel *lblHP;
-    QLabel *label3;
+    QLabel *labelATK;
     QLabel *lblATK;
-    QLabel *label4;
+    QLabel *labelRolls;
     QLabel *lblRolls;
-    QFrame *line;
-    QPushButton *btnRoll;
-    QLabel *label5;
+    QLabel *labelD1;
     QLabel *lblD1;
-    QComboBox *dir1;
-    QLabel *label6;
+    QLabel *labelD2;
     QLabel *lblD2;
+    QHBoxLayout *hDirs;
+    QComboBox *dir1;
     QComboBox *dir2;
+    QHBoxLayout *hButtons;
+    QPushButton *btnRoll;
     QPushButton *btnMove;
-    QFrame *line2;
-    QLabel *label7;
-    QLineEdit *cheatLine;
-    QFrame *line3;
+    QHBoxLayout *hSaveLoad;
     QPushButton *btnSave;
     QPushButton *btnLoad;
-    QDockWidget *dockLog;
-    QWidget *widget;
-    QVBoxLayout *vboxLayout;
+    QLineEdit *cheatLine;
     QTextEdit *logText;
+    QSpacerItem *vspacer;
+    QMenuBar *menubar;
+    QStatusBar *statusbar;
 
     void setupUi(QMainWindow *MainWindow)
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName("MainWindow");
-        MainWindow->resize(980, 640);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName("centralwidget");
-        horizontalLayout = new QHBoxLayout(centralwidget);
-        horizontalLayout->setObjectName("horizontalLayout");
+        hLayout = new QHBoxLayout(centralwidget);
+        hLayout->setObjectName("hLayout");
         table = new QTableWidget(centralwidget);
         table->setObjectName("table");
 
-        horizontalLayout->addWidget(table);
+        hLayout->addWidget(table);
 
-        panel = new QWidget(centralwidget);
-        panel->setObjectName("panel");
-        verticalLayout = new QVBoxLayout(panel);
-        verticalLayout->setObjectName("verticalLayout");
-        label = new QLabel(panel);
-        label->setObjectName("label");
+        vRight = new QVBoxLayout();
+        vRight->setObjectName("vRight");
+        gridStats = new QGridLayout();
+        gridStats->setObjectName("gridStats");
+        labelFloor = new QLabel(centralwidget);
+        labelFloor->setObjectName("labelFloor");
 
-        verticalLayout->addWidget(label);
+        gridStats->addWidget(labelFloor, 0, 0, 1, 1);
 
-        label1 = new QLabel(panel);
-        label1->setObjectName("label1");
-
-        verticalLayout->addWidget(label1);
-
-        lblFloor = new QLabel(panel);
+        lblFloor = new QLabel(centralwidget);
         lblFloor->setObjectName("lblFloor");
 
-        verticalLayout->addWidget(lblFloor);
+        gridStats->addWidget(lblFloor, 0, 1, 1, 1);
 
-        label2 = new QLabel(panel);
-        label2->setObjectName("label2");
+        labelHP = new QLabel(centralwidget);
+        labelHP->setObjectName("labelHP");
 
-        verticalLayout->addWidget(label2);
+        gridStats->addWidget(labelHP, 1, 0, 1, 1);
 
-        lblHP = new QLabel(panel);
+        lblHP = new QLabel(centralwidget);
         lblHP->setObjectName("lblHP");
 
-        verticalLayout->addWidget(lblHP);
+        gridStats->addWidget(lblHP, 1, 1, 1, 1);
 
-        label3 = new QLabel(panel);
-        label3->setObjectName("label3");
+        labelATK = new QLabel(centralwidget);
+        labelATK->setObjectName("labelATK");
 
-        verticalLayout->addWidget(label3);
+        gridStats->addWidget(labelATK, 2, 0, 1, 1);
 
-        lblATK = new QLabel(panel);
+        lblATK = new QLabel(centralwidget);
         lblATK->setObjectName("lblATK");
 
-        verticalLayout->addWidget(lblATK);
+        gridStats->addWidget(lblATK, 2, 1, 1, 1);
 
-        label4 = new QLabel(panel);
-        label4->setObjectName("label4");
+        labelRolls = new QLabel(centralwidget);
+        labelRolls->setObjectName("labelRolls");
 
-        verticalLayout->addWidget(label4);
+        gridStats->addWidget(labelRolls, 3, 0, 1, 1);
 
-        lblRolls = new QLabel(panel);
+        lblRolls = new QLabel(centralwidget);
         lblRolls->setObjectName("lblRolls");
 
-        verticalLayout->addWidget(lblRolls);
+        gridStats->addWidget(lblRolls, 3, 1, 1, 1);
 
-        line = new QFrame(panel);
-        line->setObjectName("line");
+        labelD1 = new QLabel(centralwidget);
+        labelD1->setObjectName("labelD1");
 
-        verticalLayout->addWidget(line);
+        gridStats->addWidget(labelD1, 4, 0, 1, 1);
 
-        btnRoll = new QPushButton(panel);
-        btnRoll->setObjectName("btnRoll");
-
-        verticalLayout->addWidget(btnRoll);
-
-        label5 = new QLabel(panel);
-        label5->setObjectName("label5");
-
-        verticalLayout->addWidget(label5);
-
-        lblD1 = new QLabel(panel);
+        lblD1 = new QLabel(centralwidget);
         lblD1->setObjectName("lblD1");
 
-        verticalLayout->addWidget(lblD1);
+        gridStats->addWidget(lblD1, 4, 1, 1, 1);
 
-        dir1 = new QComboBox(panel);
+        labelD2 = new QLabel(centralwidget);
+        labelD2->setObjectName("labelD2");
+
+        gridStats->addWidget(labelD2, 5, 0, 1, 1);
+
+        lblD2 = new QLabel(centralwidget);
+        lblD2->setObjectName("lblD2");
+
+        gridStats->addWidget(lblD2, 5, 1, 1, 1);
+
+
+        vRight->addLayout(gridStats);
+
+        hDirs = new QHBoxLayout();
+        hDirs->setObjectName("hDirs");
+        dir1 = new QComboBox(centralwidget);
         dir1->addItem(QString());
         dir1->addItem(QString());
         dir1->addItem(QString());
         dir1->addItem(QString());
         dir1->setObjectName("dir1");
 
-        verticalLayout->addWidget(dir1);
+        hDirs->addWidget(dir1);
 
-        label6 = new QLabel(panel);
-        label6->setObjectName("label6");
-
-        verticalLayout->addWidget(label6);
-
-        lblD2 = new QLabel(panel);
-        lblD2->setObjectName("lblD2");
-
-        verticalLayout->addWidget(lblD2);
-
-        dir2 = new QComboBox(panel);
+        dir2 = new QComboBox(centralwidget);
         dir2->addItem(QString());
         dir2->addItem(QString());
         dir2->addItem(QString());
         dir2->addItem(QString());
         dir2->setObjectName("dir2");
 
-        verticalLayout->addWidget(dir2);
+        hDirs->addWidget(dir2);
 
-        btnMove = new QPushButton(panel);
+
+        vRight->addLayout(hDirs);
+
+        hButtons = new QHBoxLayout();
+        hButtons->setObjectName("hButtons");
+        btnRoll = new QPushButton(centralwidget);
+        btnRoll->setObjectName("btnRoll");
+
+        hButtons->addWidget(btnRoll);
+
+        btnMove = new QPushButton(centralwidget);
         btnMove->setObjectName("btnMove");
 
-        verticalLayout->addWidget(btnMove);
+        hButtons->addWidget(btnMove);
 
-        line2 = new QFrame(panel);
-        line2->setObjectName("line2");
 
-        verticalLayout->addWidget(line2);
+        vRight->addLayout(hButtons);
 
-        label7 = new QLabel(panel);
-        label7->setObjectName("label7");
-
-        verticalLayout->addWidget(label7);
-
-        cheatLine = new QLineEdit(panel);
-        cheatLine->setObjectName("cheatLine");
-
-        verticalLayout->addWidget(cheatLine);
-
-        line3 = new QFrame(panel);
-        line3->setObjectName("line3");
-
-        verticalLayout->addWidget(line3);
-
-        btnSave = new QPushButton(panel);
+        hSaveLoad = new QHBoxLayout();
+        hSaveLoad->setObjectName("hSaveLoad");
+        btnSave = new QPushButton(centralwidget);
         btnSave->setObjectName("btnSave");
 
-        verticalLayout->addWidget(btnSave);
+        hSaveLoad->addWidget(btnSave);
 
-        btnLoad = new QPushButton(panel);
+        btnLoad = new QPushButton(centralwidget);
         btnLoad->setObjectName("btnLoad");
 
-        verticalLayout->addWidget(btnLoad);
+        hSaveLoad->addWidget(btnLoad);
 
 
-        horizontalLayout->addWidget(panel);
+        vRight->addLayout(hSaveLoad);
+
+        cheatLine = new QLineEdit(centralwidget);
+        cheatLine->setObjectName("cheatLine");
+
+        vRight->addWidget(cheatLine);
+
+        logText = new QTextEdit(centralwidget);
+        logText->setObjectName("logText");
+
+        vRight->addWidget(logText);
+
+        vspacer = new QSpacerItem(20, 40, QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Expanding);
+
+        vRight->addItem(vspacer);
+
+
+        hLayout->addLayout(vRight);
 
         MainWindow->setCentralWidget(centralwidget);
-        dockLog = new QDockWidget(MainWindow);
-        dockLog->setObjectName("dockLog");
-        widget = new QWidget();
-        widget->setObjectName("widget");
-        vboxLayout = new QVBoxLayout(widget);
-        vboxLayout->setObjectName("vboxLayout");
-        logText = new QTextEdit(widget);
-        logText->setObjectName("logText");
-        logText->setReadOnly(true);
-
-        vboxLayout->addWidget(logText);
-
-        dockLog->setWidget(widget);
-        MainWindow->addDockWidget(Qt::DockWidgetArea::BottomDockWidgetArea, dockLog);
+        menubar = new QMenuBar(MainWindow);
+        menubar->setObjectName("menubar");
+        MainWindow->setMenuBar(menubar);
+        statusbar = new QStatusBar(MainWindow);
+        statusbar->setObjectName("statusbar");
+        MainWindow->setStatusBar(statusbar);
 
         retranslateUi(MainWindow);
 
@@ -236,36 +229,34 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "AngelDungeon", nullptr));
-        label->setText(QCoreApplication::translate("MainWindow", "Estad\303\255sticas", nullptr));
-        label1->setText(QCoreApplication::translate("MainWindow", "Piso:", nullptr));
+        MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "AngelDungeon - Base", nullptr));
+        labelFloor->setText(QCoreApplication::translate("MainWindow", "Piso:", nullptr));
         lblFloor->setText(QCoreApplication::translate("MainWindow", "1", nullptr));
-        label2->setText(QCoreApplication::translate("MainWindow", "HP:", nullptr));
+        labelHP->setText(QCoreApplication::translate("MainWindow", "HP:", nullptr));
         lblHP->setText(QCoreApplication::translate("MainWindow", "3/3", nullptr));
-        label3->setText(QCoreApplication::translate("MainWindow", "ATK:", nullptr));
-        lblATK->setText(QCoreApplication::translate("MainWindow", "4", nullptr));
-        label4->setText(QCoreApplication::translate("MainWindow", "Tiradas restantes:", nullptr));
+        labelATK->setText(QCoreApplication::translate("MainWindow", "ATK:", nullptr));
+        lblATK->setText(QCoreApplication::translate("MainWindow", "1", nullptr));
+        labelRolls->setText(QCoreApplication::translate("MainWindow", "Tiradas:", nullptr));
         lblRolls->setText(QCoreApplication::translate("MainWindow", "10", nullptr));
-        btnRoll->setText(QCoreApplication::translate("MainWindow", "Tirar dados", nullptr));
-        label5->setText(QCoreApplication::translate("MainWindow", "Dado 1", nullptr));
+        labelD1->setText(QCoreApplication::translate("MainWindow", "D1:", nullptr));
         lblD1->setText(QCoreApplication::translate("MainWindow", "0", nullptr));
-        dir1->setItemText(0, QCoreApplication::translate("MainWindow", "\342\206\221", nullptr));
-        dir1->setItemText(1, QCoreApplication::translate("MainWindow", "\342\206\223", nullptr));
-        dir1->setItemText(2, QCoreApplication::translate("MainWindow", "\342\206\220", nullptr));
-        dir1->setItemText(3, QCoreApplication::translate("MainWindow", "\342\206\222", nullptr));
-
-        label6->setText(QCoreApplication::translate("MainWindow", "Dado 2", nullptr));
+        labelD2->setText(QCoreApplication::translate("MainWindow", "D2:", nullptr));
         lblD2->setText(QCoreApplication::translate("MainWindow", "0", nullptr));
-        dir2->setItemText(0, QCoreApplication::translate("MainWindow", "\342\206\221", nullptr));
-        dir2->setItemText(1, QCoreApplication::translate("MainWindow", "\342\206\223", nullptr));
-        dir2->setItemText(2, QCoreApplication::translate("MainWindow", "\342\206\220", nullptr));
-        dir2->setItemText(3, QCoreApplication::translate("MainWindow", "\342\206\222", nullptr));
+        dir1->setItemText(0, QCoreApplication::translate("MainWindow", "Up", nullptr));
+        dir1->setItemText(1, QCoreApplication::translate("MainWindow", "Down", nullptr));
+        dir1->setItemText(2, QCoreApplication::translate("MainWindow", "Left", nullptr));
+        dir1->setItemText(3, QCoreApplication::translate("MainWindow", "Right", nullptr));
 
+        dir2->setItemText(0, QCoreApplication::translate("MainWindow", "Up", nullptr));
+        dir2->setItemText(1, QCoreApplication::translate("MainWindow", "Down", nullptr));
+        dir2->setItemText(2, QCoreApplication::translate("MainWindow", "Left", nullptr));
+        dir2->setItemText(3, QCoreApplication::translate("MainWindow", "Right", nullptr));
+
+        btnRoll->setText(QCoreApplication::translate("MainWindow", "Tirar Dados", nullptr));
         btnMove->setText(QCoreApplication::translate("MainWindow", "Mover", nullptr));
-        label7->setText(QCoreApplication::translate("MainWindow", "Consola (cheats):", nullptr));
         btnSave->setText(QCoreApplication::translate("MainWindow", "Guardar", nullptr));
         btnLoad->setText(QCoreApplication::translate("MainWindow", "Cargar", nullptr));
-        dockLog->setWindowTitle(QCoreApplication::translate("MainWindow", "Registro", nullptr));
+        cheatLine->setPlaceholderText(QCoreApplication::translate("MainWindow", "Cheat: reveal", nullptr));
     } // retranslateUi
 
 };

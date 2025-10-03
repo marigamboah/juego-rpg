@@ -1,14 +1,12 @@
-#pragma once
-#include <QString>
+#ifndef ITEMS_H
+#define ITEMS_H
 
-enum class ItemType { Weapon, MaxHpUp, Heal10Pct };
+#include <QtGlobal>
+
+enum class ItemType { Weapon, MaxHP, Heal };
 
 struct Item {
-    ItemType type;
-    int value{0};
-    QString name;
-    QString desc;
-    static Item weapon(int dmg);
-    static Item maxHpUp();
-    static Item heal10();
+    ItemType type{ItemType::Weapon};
 };
+
+#endif // ITEMS_H

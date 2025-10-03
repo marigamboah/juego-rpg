@@ -2,76 +2,78 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
-  <property name="geometry">
-   <rect><x>0</x><y>0</y><width>980</width><height>640</height></rect>
-  </property>
   <property name="windowTitle">
-   <string>AngelDungeon</string>
+   <string>AngelDungeon - Base</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
+   <layout class="QHBoxLayout" name="hLayout">
     <item>
      <widget class="QTableWidget" name="table"/>
     </item>
     <item>
-     <widget class="QWidget" name="panel" native="true">
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item><widget class="QLabel"><property name="text"><string>Estadísticas</string></property></widget></item>
-       <item><widget class="QLabel"><property name="text"><string>Piso:</string></property></widget></item>
-       <item><widget class="QLabel" name="lblFloor"><property name="text"><string>1</string></property></widget></item>
-       <item><widget class="QLabel"><property name="text"><string>HP:</string></property></widget></item>
-       <item><widget class="QLabel" name="lblHP"><property name="text"><string>3/3</string></property></widget></item>
-       <item><widget class="QLabel"><property name="text"><string>ATK:</string></property></widget></item>
-       <item><widget class="QLabel" name="lblATK"><property name="text"><string>4</string></property></widget></item>
-       <item><widget class="QLabel"><property name="text"><string>Tiradas restantes:</string></property></widget></item>
-       <item><widget class="QLabel" name="lblRolls"><property name="text"><string>10</string></property></widget></item>
-       <item><widget class="Line" name="line"/></item>
-       <item><widget class="QPushButton" name="btnRoll"><property name="text"><string>Tirar dados</string></property></widget></item>
-       <item><widget class="QLabel"><property name="text"><string>Dado 1</string></property></widget></item>
-       <item><widget class="QLabel" name="lblD1"><property name="text"><string>0</string></property></widget></item>
-       <item><widget class="QComboBox" name="dir1">
-         <item><property name="text"><string>↑</string></property></item>
-         <item><property name="text"><string>↓</string></property></item>
-         <item><property name="text"><string>←</string></property></item>
-         <item><property name="text"><string>→</string></property></item>
-       </widget></item>
-       <item><widget class="QLabel"><property name="text"><string>Dado 2</string></property></widget></item>
-       <item><widget class="QLabel" name="lblD2"><property name="text"><string>0</string></property></widget></item>
-       <item><widget class="QComboBox" name="dir2">
-         <item><property name="text"><string>↑</string></property></item>
-         <item><property name="text"><string>↓</string></property></item>
-         <item><property name="text"><string>←</string></property></item>
-         <item><property name="text"><string>→</string></property></item>
-       </widget></item>
-       <item><widget class="QPushButton" name="btnMove"><property name="text"><string>Mover</string></property></widget></item>
-       <item><widget class="Line" name="line2"/></item>
-       <item><widget class="QLabel"><property name="text"><string>Consola (cheats):</string></property></widget></item>
-       <item><widget class="QLineEdit" name="cheatLine"/></item>
-       <item><widget class="Line" name="line3"/></item>
-       <item><widget class="QPushButton" name="btnSave"><property name="text"><string>Guardar</string></property></widget></item>
-       <item><widget class="QPushButton" name="btnLoad"><property name="text"><string>Cargar</string></property></widget></item>
-      </layout>
-     </widget>
+     <layout class="QVBoxLayout" name="vRight">
+      <item>
+       <layout class="QGridLayout" name="gridStats">
+        <item row="0" column="0"><widget class="QLabel" name="labelFloor"><property name="text"><string>Piso:</string></property></widget></item>
+        <item row="0" column="1"><widget class="QLabel" name="lblFloor"><property name="text"><string>1</string></property></widget></item>
+        <item row="1" column="0"><widget class="QLabel" name="labelHP"><property name="text"><string>HP:</string></property></widget></item>
+        <item row="1" column="1"><widget class="QLabel" name="lblHP"><property name="text"><string>3/3</string></property></widget></item>
+        <item row="2" column="0"><widget class="QLabel" name="labelATK"><property name="text"><string>ATK:</string></property></widget></item>
+        <item row="2" column="1"><widget class="QLabel" name="lblATK"><property name="text"><string>1</string></property></widget></item>
+        <item row="3" column="0"><widget class="QLabel" name="labelRolls"><property name="text"><string>Tiradas:</string></property></widget></item>
+        <item row="3" column="1"><widget class="QLabel" name="lblRolls"><property name="text"><string>10</string></property></widget></item>
+        <item row="4" column="0"><widget class="QLabel" name="labelD1"><property name="text"><string>D1:</string></property></widget></item>
+        <item row="4" column="1"><widget class="QLabel" name="lblD1"><property name="text"><string>0</string></property></widget></item>
+        <item row="5" column="0"><widget class="QLabel" name="labelD2"><property name="text"><string>D2:</string></property></widget></item>
+        <item row="5" column="1"><widget class="QLabel" name="lblD2"><property name="text"><string>0</string></property></widget></item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="hDirs">
+        <item><widget class="QComboBox" name="dir1">
+          <item><property name="text"><string>Up</string></property></item>
+          <item><property name="text"><string>Down</string></property></item>
+          <item><property name="text"><string>Left</string></property></item>
+          <item><property name="text"><string>Right</string></property></item>
+        </widget></item>
+        <item><widget class="QComboBox" name="dir2">
+          <item><property name="text"><string>Up</string></property></item>
+          <item><property name="text"><string>Down</string></property></item>
+          <item><property name="text"><string>Left</string></property></item>
+          <item><property name="text"><string>Right</string></property></item>
+        </widget></item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="hButtons">
+        <item><widget class="QPushButton" name="btnRoll"><property name="text"><string>Tirar Dados</string></property></widget></item>
+        <item><widget class="QPushButton" name="btnMove"><property name="text"><string>Mover</string></property></widget></item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="hSaveLoad">
+        <item><widget class="QPushButton" name="btnSave"><property name="text"><string>Guardar</string></property></widget></item>
+        <item><widget class="QPushButton" name="btnLoad"><property name="text"><string>Cargar</string></property></widget></item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="cheatLine">
+        <property name="placeholderText"><string>Cheat: reveal</string></property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QTextEdit" name="logText"/>
+      </item>
+      <item>
+       <spacer name="vspacer"><property name="orientation"><enum>Qt::Vertical</enum></property>
+        <property name="sizeHint" stdset="0"><size><width>20</width><height>40</height></size></property></spacer>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
-
-  <!-- Dock de Registro -->
-  <widget class="QDockWidget" name="dockLog">
-   <property name="windowTitle"><string>Registro</string></property>
-
-   <!-- Esta línea es la CLAVE: fija el área del dock -->
-   <attribute name="dockWidgetArea">
-    <!-- Valores: 1=Left, 2=Right, 4=Top, 8=Bottom -->
-    <number>8</number>
-   </attribute>
-
-   <widget class="QWidget">
-    <layout class="QVBoxLayout">
-     <item><widget class="QTextEdit" name="logText"><property name="readOnly"><bool>true</bool></property></widget></item>
-    </layout>
-   </widget>
-  </widget>
+  <widget class="QMenuBar" name="menubar"/>
+  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections/>

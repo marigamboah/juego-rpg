@@ -1,18 +1,17 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-
-#include <QTableWidgetItem>
 #include <QMessageBox>
+#include <QTableWidgetItem>
+#include <QHeaderView>     // por horizontalHeader()/verticalHeader()
+#include "engine/types.h"  // TileType, TurnResult (si no los incluye tu mainwindow.h)
+
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
-{
+    : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
     setupBoard();
     updateHUD();
 
-    // Conexiones de botones
     connect(ui->btnRoll, &QPushButton::clicked, this, &MainWindow::onRollDice);
     connect(ui->btnMove, &QPushButton::clicked, this, &MainWindow::onMove);
     connect(ui->btnSave, &QPushButton::clicked, this, &MainWindow::onSave);
@@ -20,16 +19,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->cheatLine, &QLineEdit::returnPressed, this, &MainWindow::onCheatEntered);
 }
 
-MainWindow::~MainWindow()
-{
-    delete ui;
-}
+MainWindow::~MainWindow() { delete ui; }
 
-//
-// === Inicialización del tablero ===
-//
-void MainWindow::setupBoard()
-{
+void MainWindow::setupBoard() {
     ui->table->setRowCount(10);
     ui->table->setColumnCount(10);
     ui->table->horizontalHeader()->setVisible(false);
@@ -37,161 +29,70 @@ void MainWindow::setupBoard()
     ui->table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->table->setSelectionMode(QAbstractItemView::NoSelection);
 
-    for (int r = 0; r < 10; ++r) {
-        ui->table->setRowHeight(r, 50);
-        for (int c = 0; c < 10; ++c) {
-            ui->table->setColumnWidth(c, 50);
-            auto *item = new QTableWidgetItem();
-            item->setTextAlignment(Qt::AlignCenter);
-            ui->table->setItem(r, c, item);
+    for (int r=0;r<10;++r) {
+        ui->table->setRowHeight(r, 36);
+        for (int c=0;c<10;++c) {
+            ui->table->setColumnWidth(c, 36);
+            auto *it = new QTableWidgetItem();
+            it->setTextAlignment(Qt::AlignCenter);
+            ui->table->setItem(r,c,it);
         }
     }
-
     paintBoard();
 }
 
-//
-// === Pintar una celda individual ===
-//
-void MainWindow::paintCell(int row, int col)
-{
-    auto tile = game.getTile(row, col);
-    QTableWidgetItem *item = ui->table->item(row, col);
-
-    switch (tile.type) {
-    case TileType::Empty:
-        item->setText("");
-        break;
-    case TileType::Player:
-        item->setText("😃");
-        break;
-    case TileType::Enemy:
-        item->setText("👹");
-        break;
-    case TileType::Chest:
-        item->setText("💰");
-        break;
-    case TileType::Tavern:
-        item->setText("🍻");
-        break;
-    default:
-        item->setText("?");
-        break;
+void MainWindow::paintCell(int r,int c) {
+    TileType t = game.getTile(r,c);
+    auto *it = ui->table->item(r,c);
+    switch (t) {
+    case TileType::Empty:  it->setText(""); break;
+    case TileType::Player: it->setText("🧝"); break;
+    case TileType::Enemy:  it->setText("👹"); break;
+    case TileType::Chest:  it->setText("💰"); break;
+    case TileType::Tavern: it->setText("🍻"); break;
+    case TileType::Exit:   it->setText("⛩"); break;
     }
 }
-
-//
-// === Pintar todo el tablero ===
-//
-void MainWindow::paintBoard()
-{
-    for (int r = 0; r < 10; ++r) {
-        for (int c = 0; c < 10; ++c) {
-            paintCell(r, c);
-        }
-    }
+void MainWindow::paintBoard() {
+    for (int r=0;r<10;++r)
+        for (int c=0;c<10;++c)
+            paintCell(r,c);
 }
-
-//
-// === Actualizar HUD (estadísticas) ===
-//
-void MainWindow::updateHUD()
-{
+void MainWindow::updateHUD() {
     ui->lblFloor->setText(QString::number(game.getFloor()));
     ui->lblHP->setText(QString("%1/%2").arg(game.getPlayerHP()).arg(game.getPlayerMaxHP()));
     ui->lblATK->setText(QString::number(game.getPlayerATK()));
     ui->lblRolls->setText(QString::number(game.getRemainingRolls()));
 }
+void MainWindow::log(const QString& m) { ui->logText->append(m); }
 
-//
-// === Escribir en el registro ===
-//
-void MainWindow::log(const QString &msg)
-{
-    ui->logText->append(msg);
+void MainWindow::handleTurnResult(TurnResult res) {
+    switch (res) {
+    case TurnResult::Moved: log("Te moviste."); break;
+    case TurnResult::EnemyDefeated: log("¡Enemigo derrotado!"); break;
+    case TurnResult::PlayerDefeated:
+        log("Has muerto… Game Over."); QMessageBox::information(this,"Game Over","El jugador ha muerto."); break;
+    case TurnResult::ChestOpened: log("Abriste un cofre."); break;
+    case TurnResult::TavernRest: log("Descansaste en la taberna."); break;
+    }
 }
 
-//
-// === Acciones del jugador ===
-//
-void MainWindow::onRollDice()
-{
-    auto res = game.rollDice();
-    ui->lblD1->setText(QString::number(res.first));
-    ui->lblD2->setText(QString::number(res.second));
+void MainWindow::onRollDice() {
+    auto d = game.rollDice();
+    ui->lblD1->setText(QString::number(d.first));
+    ui->lblD2->setText(QString::number(d.second));
     updateHUD();
     log("Has tirado los dados.");
 }
-
-void MainWindow::onMove()
-{
-    QString dir1 = ui->dir1->currentText();
-    QString dir2 = ui->dir2->currentText();
-
-    auto result = game.playerMove(dir1, dir2);
-
-    handleTurnResult(result);
+void MainWindow::onMove() {
+    handleTurnResult(game.playerMove(ui->dir1->currentText(), ui->dir2->currentText()));
     updateHUD();
     paintBoard();
 }
-
-void MainWindow::handleTurnResult(const TurnResult &res)
-{
-    switch (res) {
-    case TurnResult::EnemyDefeated:
-        log("¡Derrotaste a un enemigo!");
-        break;
-    case TurnResult::PlayerDefeated:
-        log("Has muerto… Game Over.");
-        QMessageBox::information(this, "Game Over", "El jugador ha muerto.");
-        break;
-    case TurnResult::ChestOpened:
-        log("Encontraste un cofre.");
-        break;
-    case TurnResult::TavernRest:
-        log("Descansaste en la taberna.");
-        break;
-    case TurnResult::Moved:
-        log("Te moviste.");
-        break;
-    }
+void MainWindow::revealAllTiles() { game.revealAll(); paintBoard(); log("Cheat: tablero revelado."); }
+void MainWindow::onCheatEntered() {
+    const QString cmd = ui->cheatLine->text().trimmed(); ui->cheatLine->clear();
+    if (cmd=="reveal") revealAllTiles(); else log("Comando desconocido: "+cmd);
 }
-
-void MainWindow::revealAllTiles()
-{
-    game.revealAll();
-    paintBoard();
-    log("Cheat: tablero revelado.");
-}
-
-void MainWindow::onCheatEntered()
-{
-    QString cmd = ui->cheatLine->text();
-    ui->cheatLine->clear();
-
-    if (cmd == "reveal") {
-        revealAllTiles();
-    } else {
-        log("Comando desconocido: " + cmd);
-    }
-}
-
-void MainWindow::onSave()
-{
-    if (game.save("savegame.dat")) {
-        log("Juego guardado.");
-    } else {
-        log("Error al guardar.");
-    }
-}
-
-void MainWindow::onLoad()
-{
-    if (game.load("savegame.dat")) {
-        paintBoard();
-        updateHUD();
-        log("Juego cargado.");
-    } else {
-        log("Error al cargar partida.");
-    }
-}
+void MainWindow::onSave() { if (game.save("savegame.json")) log("Partida guardada."); else log("Error al guardar."); }
+void MainWindow::onLoad() { if (game.load("savegame.json")) { paintBoard(); updateHUD(); log("Partida cargada."); } else log("Error al cargar."); }

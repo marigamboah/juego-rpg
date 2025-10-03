@@ -1,57 +1,54 @@
-#pragma once
+#ifndef GAME_H
+#define GAME_H
+
+#include <array>
 #include <QString>
-#include <QVector>
-#include <utility>
-#include <algorithm>
-
-enum class TileType { Empty, Player, Enemy, Chest, Tavern };
-
-struct Cell {
-    TileType type = TileType::Empty;
-    int id = -1;
-};
-
-enum class TurnResult { EnemyDefeated, PlayerDefeated, ChestOpened, TavernRest, Moved };
-
-// === NUEVO: tipo para posición ===
-struct Pos { int row{0}; int col{0}; };
+#include "types.h"
+#include "character.h"
+#include "floor.h"
 
 class Game {
 public:
     Game();
 
-    // Getters
-    int getFloor() const          { return currentFloor; }
-    int getPlayerHP() const       { return playerHP; }
-    int getPlayerMaxHP() const    { return playerMaxHP; }
-    int getPlayerATK() const      { return playerATK; }
-    int getRemainingRolls() const { return rollsLeft; }
-    Pos getPlayerPos() const      { return {playerRow, playerCol}; } // NUEVO
+    // Lectura
+    int getFloor() const { return floorIndex_+1; }
+    int getPlayerHP() const { return player_.hp(); }
+    int getPlayerMaxHP() const { return player_.maxHp(); }
+    int getPlayerATK() const { return player_.atk(); }
+    int getRemainingRolls() const { return rollsLeft_; }
+    Pos getPlayerPos() const { return pos_; }
+    TileType getTile(int r, int c) const;
 
-    // Setters (para Save::fromJson)
-    void setFloor(int v)                { currentFloor = std::max(1, v); }   // NUEVO
-    void setRemainingRolls(int v)       { rollsLeft = std::max(0, v); }      // NUEVO
-    void setPlayerPos(Pos p);                                               // NUEVO
-    void setPlayerHP(int v)             { playerHP = std::clamp(v, 0, playerMaxHP); } // opcional
-    void setPlayerMaxHP(int v)          { playerMaxHP = std::max(1, v); playerHP = std::min(playerHP, playerMaxHP); } // opcional
-    void setPlayerATK(int v)            { playerATK = std::max(0, v); }      // opcional
+    // Escritura (para Save)
+    void setFloor(int f);               // 1..5
+    void setRemainingRolls(int v) { rollsLeft_=v; }
+    void setPlayerPos(Pos p);
+    void setPlayerStats(int hp, int maxhp, int atk);
 
-    // Lógica
-    std::pair<int,int> rollDice();
-    TurnResult playerMove(const QString &dir1, const QString &dir2);
+    // Acciones
+    std::pair<int,int> rollDice();               // devuelve (d1,d2)
+    TurnResult playerMove(const QString& dir1, const QString& dir2);
     void revealAll();
 
-    Cell getTile(int row, int col) const;
-
-    // Guardado / carga directos
-    bool save(const QString &file);
-    bool load(const QString &file);
+    // Persistencia
+    bool save(const QString& file);
+    bool load(const QString& file);
 
 private:
-    static const int N = 10;
-    QVector<QVector<Cell>> grid;
-    int currentFloor;
-    int playerHP, playerMaxHP, playerATK;
-    int rollsLeft;
-    int playerRow, playerCol;
+    void clampPos();
+    void setPlayerOnGrid();
+    void clearPlayerOnGrid();
+    void nextFloor();
+
+private:
+    static constexpr int kFloors = 5;
+    std::array<Floor,kFloors> floors_;
+    int floorIndex_{0};  // 0..4
+    Character player_{3,1};
+    Pos pos_{ Floor::entry() };
+    int rollsLeft_{10};
+    int lastD1_{0}, lastD2_{0};
 };
+
+#endif // GAME_H

@@ -1,122 +1,154 @@
 #include "game.h"
+#include "save.h"
 #include <QFile>
 #include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
-#include <cstdlib>
+#include <QRandomGenerator>
+#include <algorithm>
 
-Game::Game()
-    : currentFloor(1), playerHP(3), playerMaxHP(3), playerATK(1),
-    rollsLeft(10), playerRow(0), playerCol(0)
-{
-    grid.resize(N, QVector<Cell>(N, {TileType::Empty, -1}));
-    grid[playerRow][playerCol].type = TileType::Player;
+Game::Game() {
+    for (int i=0;i<kFloors;++i) floors_[i] = Floor(i+1);
+    pos_ = Floor::entry();
+    setPlayerOnGrid();
 }
 
-// === NUEVO: mover el marcador del jugador de forma segura ===
+TileType Game::getTile(int r, int c) const {
+    if (pos_.r==r && pos_.c==c) return TileType::Player;
+    return floors_[floorIndex_].at(r,c).type;
+}
+
+void Game::setFloor(int f) {
+    f = std::max(1,std::min(f,kFloors));
+    clearPlayerOnGrid();
+    floorIndex_ = f-1;
+    pos_ = Floor::entry();
+    rollsLeft_ = 10;
+    setPlayerOnGrid();
+}
+
 void Game::setPlayerPos(Pos p) {
-    // limpiar posición anterior
-    if (playerRow >= 0 && playerRow < N && playerCol >= 0 && playerCol < N) {
-        if (grid[playerRow][playerCol].type == TileType::Player)
-            grid[playerRow][playerCol].type = TileType::Empty;
-    }
-    // clamp y asignar nueva
-    playerRow = std::clamp(p.row, 0, N-1);
-    playerCol = std::clamp(p.col, 0, N-1);
-    grid[playerRow][playerCol].type = TileType::Player;
+    clearPlayerOnGrid();
+    pos_ = p; clampPos();
+    setPlayerOnGrid();
+}
+
+void Game::setPlayerStats(int hp, int maxhp, int atk) {
+    player_.addMaxHp(maxhp - player_.maxHp());
+    player_.addAtk(atk - player_.atk());
+    player_.setHp(hp);
 }
 
 std::pair<int,int> Game::rollDice() {
-    if (rollsLeft <= 0) return {0,0};
-    --rollsLeft;
-    int d1 = 1 + rand()%6;
-    int d2 = 1 + rand()%6;
-    return {d1,d2};
+    if (rollsLeft_<=0) return {0,0};
+    --rollsLeft_;
+    lastD1_ = int(QRandomGenerator::global()->bounded(1,7));
+    lastD2_ = int(QRandomGenerator::global()->bounded(1,7));
+    return {lastD1_, lastD2_};
 }
 
-TurnResult Game::playerMove(const QString &dir1, const QString &dir2) {
-    auto moveOne = [&](const QString &dir) {
-        int dr=0, dc=0;
-        if (dir == "↑") dr=-1;
-        if (dir == "↓") dr=+1;
-        if (dir == "←") dc=-1;
-        if (dir == "→") dc=+1;
-
-        int nr = playerRow + dr, nc = playerCol + dc;
-        if (nr < 0 || nr >= N || nc < 0 || nc >= N) return TurnResult::Moved;
-
-        grid[playerRow][playerCol].type = TileType::Empty;
-        playerRow = nr; playerCol = nc;
-
-        auto &tile = grid[playerRow][playerCol];
-        TurnResult res = TurnResult::Moved;
-        switch (tile.type) {
-        case TileType::Enemy:
-            if (playerATK >= 1) { res = TurnResult::EnemyDefeated; }
-            else { playerHP = 0; res = TurnResult::PlayerDefeated; }
-            break;
-        case TileType::Chest:
-            playerATK += 1; res = TurnResult::ChestOpened; break;
-        case TileType::Tavern:
-            playerHP = std::min(playerMaxHP, playerHP + 2);
-            res = TurnResult::TavernRest; break;
-        default:
-            res = TurnResult::Moved;
-        }
-
-        tile.type = TileType::Player;
-        return res;
+TurnResult Game::playerMove(const QString& dir1, const QString& dir2) {
+    auto stepOf = [](const QString& d)->Pos {
+        if (d=="↑") return {-1,0};
+        if (d=="↓") return {1,0};
+        if (d=="←") return {0,-1};
+        if (d=="→") return {0,1};
+        return {0,0};
     };
 
-    TurnResult r1 = moveOne(dir1);
-    if (playerHP <= 0) return r1;
-    TurnResult r2 = moveOne(dir2);
-    return r2;
+    Pos step1 = stepOf(dir1), step2 = stepOf(dir2);
+
+    clearPlayerOnGrid();
+
+    // mover d1 + d2 en línea recta según cada dirección
+    Pos cur = pos_;
+    for (int i=0;i<lastD1_;++i) { cur.r += step1.r; cur.c += step1.c; clampPos(); }
+    for (int i=0;i<lastD2_;++i) { cur.r += step2.r; cur.c += step2.c; clampPos(); }
+
+    // Resolver celda de destino
+    auto &cell = floors_[floorIndex_].at(cur.r,cur.c);
+    TurnResult res = TurnResult::Moved;
+
+    switch (cell.type) {
+    case TileType::Enemy: {
+        // combate muy básico: si ATK >= (piso), gana; si no, muere
+        int enemyHp = floors_[floorIndex_].number()+1;
+        int enemyAtk = floors_[floorIndex_].number();
+        if (player_.atk() >= enemyHp) {
+            res = TurnResult::EnemyDefeated;
+        } else {
+            player_.setHp(player_.hp() - enemyAtk);
+            if (player_.isDead()) { setPlayerOnGrid(); return TurnResult::PlayerDefeated; }
+        }
+        cell.type = TileType::Empty;
+    } break;
+    case TileType::Chest: {
+        // recompensa simple: 1/3 arma, 1/3 +maxHP, 1/3 curar
+        int r = int(QRandomGenerator::global()->bounded(3));
+        if (r==0) player_.addAtk(1);
+        else if (r==1) player_.addMaxHp(1);
+        else player_.heal(std::max(1, player_.maxHp()/10));
+        res = TurnResult::ChestOpened;
+        cell.type = TileType::Empty;
+    } break;
+    case TileType::Tavern: {
+        player_.heal(std::max(1, player_.maxHp()/5));
+        res = TurnResult::TavernRest;
+    } break;
+    case TileType::Exit: {
+        // siguiente piso
+        pos_ = cur;
+        setPlayerOnGrid();
+        nextFloor();
+        return TurnResult::Moved;
+    }
+    default: break;
+    }
+
+    pos_ = cur;
+    setPlayerOnGrid();
+    return res;
 }
 
 void Game::revealAll() {
-    for (int r=0; r<N; ++r)
-        for (int c=0; c<N; ++c)
-            if (grid[r][c].type == TileType::Empty)
-                grid[r][c].type = TileType::Enemy; // placeholder de "revelado"
+    auto &f = floors_[floorIndex_];
+    for (int r=0;r<Floor::N;++r)
+        for (int c=0;c<Floor::N;++c)
+            f.at(r,c).revealed = true;
 }
 
-Cell Game::getTile(int row, int col) const {
-    return grid[row][col];
-}
-
-// Guardado / carga directos
-bool Game::save(const QString &file) {
-    QJsonObject root;
-    root["floor"] = currentFloor;
-    root["hp"] = playerHP;
-    root["maxHp"] = playerMaxHP;
-    root["atk"] = playerATK;
-    root["rolls"] = rollsLeft;
-    root["row"] = playerRow;
-    root["col"] = playerCol;
-
-    QJsonDocument doc(root);
+bool Game::save(const QString& file) {
     QFile f(file);
     if (!f.open(QIODevice::WriteOnly)) return false;
+    QJsonDocument doc(Save::toJson(*this));
     f.write(doc.toJson());
     return true;
 }
 
-bool Game::load(const QString &file) {
+bool Game::load(const QString& file) {
     QFile f(file);
     if (!f.open(QIODevice::ReadOnly)) return false;
-    QByteArray data = f.readAll();
-    QJsonDocument doc = QJsonDocument::fromJson(data);
+    QJsonDocument doc = QJsonDocument::fromJson(f.readAll());
     if (!doc.isObject()) return false;
-
-    QJsonObject root = doc.object();
-    currentFloor = root["floor"].toInt(1);
-    playerHP = root["hp"].toInt(3);
-    playerMaxHP = root["maxHp"].toInt(3);
-    playerATK = root["atk"].toInt(1);
-    rollsLeft = root["rolls"].toInt(10);
-    setPlayerPos({ root["row"].toInt(0), root["col"].toInt(0) });
-
+    Save::fromJson(*this, doc.object());
     return true;
+}
+
+// privados
+void Game::clampPos() {
+    pos_.r = std::max(0, std::min(pos_.r, Floor::N-1));
+    pos_.c = std::max(0, std::min(pos_.c, Floor::N-1));
+}
+void Game::setPlayerOnGrid() {
+    // no marcamos Player en grid para evitar estados mezclados; UI consulta getTile()
+    auto &f = floors_[floorIndex_];
+    f.at(pos_.r,pos_.c).revealed = true;
+}
+void Game::clearPlayerOnGrid() {
+    // nada que limpiar explícitamente
+}
+void Game::nextFloor() {
+    if (floorIndex_ < kFloors-1) {
+        ++floorIndex_;
+        pos_ = Floor::entry();
+        rollsLeft_ = 10;
+    }
 }
