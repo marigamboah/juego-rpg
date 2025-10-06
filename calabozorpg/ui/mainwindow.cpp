@@ -29,43 +29,35 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
-    // 2) Crear botones Cheat y Tutorial más visibles
+    // ===== Botones Cheat y Tutorial (visibles) =====
     btnCheat    = new QPushButton("CHEAT", this);
     btnTutorial = new QPushButton("TUTORIAL", this);
-
-    // Tamaño y propiedades “llamativas”
     for (QPushButton* b : { btnCheat, btnTutorial }) {
         b->setMinimumSize(140, 42);
         b->setCursor(Qt::PointingHandCursor);
         b->setProperty("variant", "accent");  // se estiliza en styleUI()
     }
-
     // Intentar colocarlos en tu layout de guardado/carga; si no existe, van a la statusbar
     if (auto hSaveLoad = findChild<QHBoxLayout*>("hSaveLoad")) {
         hSaveLoad->addSpacing(12);
         hSaveLoad->addWidget(btnTutorial);
         hSaveLoad->addWidget(btnCheat);
     } else {
-        // fallback visible: status bar (lado derecho)
         ui->statusbar->addPermanentWidget(btnTutorial);
         ui->statusbar->addPermanentWidget(btnCheat);
     }
-
-    // Conexiones
     connect(btnCheat,    &QPushButton::clicked, this, &MainWindow::onCheatButton);
     connect(btnTutorial, &QPushButton::clicked, this, &MainWindow::showTutorialDialog);
 
     // ===== Tipografías temáticas (videojuego) con fallbacks =====
-    // Intento 1: Press Start 2P (arcade), 2: VT323 (retro), 3: Orbitron (sci-fi), fallback: Consolas
     if (QFontDatabase::hasFamily("Press Start 2P")) headingFamily = "Press Start 2P";
-    else if (QFontDatabase::hasFamily("Orbitron")) headingFamily = "Orbitron";
+    else if (QFontDatabase::hasFamily("Orbitron"))  headingFamily = "Orbitron";
     else headingFamily = "Consolas";
 
-    if (QFontDatabase::hasFamily("VT323")) bodyFamily = "VT323";
+    if (QFontDatabase::hasFamily("VT323"))          bodyFamily = "VT323";
     else if (QFontDatabase::hasFamily("Press Start 2P")) bodyFamily = "Press Start 2P";
     else bodyFamily = "Consolas";
 
-    // Para emojis nítidos
     if (QFontDatabase::hasFamily("Segoe UI Emoji")) emojiFamily = "Segoe UI Emoji";
     else emojiFamily = font().family();
 
@@ -97,22 +89,18 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->btnLoad, &QPushButton::clicked, this, &MainWindow::onLoad);
     connect(ui->cheatLine, &QLineEdit::returnPressed, this, &MainWindow::onCheatEntered);
 
-    // Botones permanentes en la barra de estado: Tutorial + Cheat
-    btnTutorial = new QPushButton("Tutorial", this);
-    btnCheat    = new QPushButton("Cheat", this);
-    for (auto *b : {btnTutorial, btnCheat}) {
-        b->setCursor(Qt::PointingHandCursor);
-        b->setMinimumHeight(26);
-        b->setProperty("variant", "ghost"); // usa el estilo “ghost” del stylesheet
-        b->style()->unpolish(b); b->style()->polish(b);
-    }
-    ui->statusbar->addPermanentWidget(btnTutorial);
-    ui->statusbar->addPermanentWidget(btnCheat);
-    connect(btnTutorial, &QPushButton::clicked, this, &MainWindow::onTutorialButton);
-    connect(btnCheat,    &QPushButton::clicked, this, &MainWindow::onCheatButton);
+    // Ocultar la barra de texto de cheat (ya usamos botón)
+    if (ui->cheatLine) { ui->cheatLine->hide(); ui->cheatLine->setEnabled(false); }
+
+    // ===== Animación del jugador (tile a tile) =====
+    ensureActorLabel();
+    animTimer = new QTimer(this);
+    animTimer->setInterval(110);  // velocidad por paso (ms)
+    connect(animTimer, &QTimer::timeout, this, &MainWindow::advanceAnimationStep);
 
     ui->statusbar->showMessage("Listo para la aventura…");
 }
+
 MainWindow::~MainWindow() {
     delete ui;
 }

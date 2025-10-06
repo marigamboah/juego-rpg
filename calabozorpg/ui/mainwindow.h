@@ -8,7 +8,7 @@
 #include <QVector>
 #include <QColor>
 #include <QPushButton>
-#include "engine/game.h"
+#include "engine/game.h"   // Debe proveer Pos, TurnResult, TileType, Floor::N
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -27,9 +27,13 @@ private slots:
     void onMove();
     void onSave();
     void onLoad();
-    void onCheatEntered();      // mantiene compatibilidad, redirige al botón
+
+    // Compatibilidad (si alguien presiona Enter en el QLineEdit oculto)
+    void onCheatEntered();
+
+    // Botones extra visibles
     void onCheatButton();       // Cheat con pregunta y 3 intentos
-    void onTutorialButton();    // Mostrar tutorial en cualquier momento
+    void onTutorialButton();    // Abrir tutorial en cualquier momento
 
 private:
     // --- Inicialización / estilo ---
@@ -57,7 +61,14 @@ private:
 
     // --- Utilidades ---
     void setGameControlsEnabled(bool enabled);
-    void revealAllTiles();      // queda como helper
+    void revealAllTiles();      // helper opcional
+
+    // --- Animación del jugador (tile a tile) ---
+    void ensureActorLabel();
+    QRect cellRectPx(int r, int c) const;
+    QVector<Pos> buildPathFromUI() const;
+    void startAnimatedMove(const QVector<Pos> &path);
+    void advanceAnimationStep();    // conectado al QTimer::timeout
 
 private:
     Ui::MainWindow *ui;
@@ -66,30 +77,22 @@ private:
     // HUD dinámico
     QProgressBar *hpBar = nullptr;
 
-    // --- Animación del jugador ---
+    // Animación
     QLabel *actorLabel = nullptr;
     QTimer *animTimer = nullptr;
     QVector<Pos> animPath;
     int animIndex = 0;
     bool animating = false;
 
-    // --- Helpers de animación ---
-    void ensureActorLabel();
-    QRect cellRectPx(int r, int c) const;
-    QVector<Pos> buildPathFromUI() const;
-    void startAnimatedMove(const QVector<Pos> &path);
-    void advanceAnimationStep();
-
-
-    // Botones extra (barra de estado)
+    // Botones extra (barra / layout)
     QPushButton *btnCheat = nullptr;
     QPushButton *btnTutorial = nullptr;
 
-    // Estado del cheat (máximo 3 intentos)
+    // Cheat (máximo 3 intentos)
     int cheatTries = 0;
     static constexpr int kCheatMaxTries = 3;
 
-    // Tipografías seleccionadas (familias)
+    // Tipografías seleccionadas
     QString headingFamily;
     QString bodyFamily;
     QString emojiFamily;
