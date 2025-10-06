@@ -438,8 +438,8 @@ void MainWindow::onRollDice() {
     ui->statusbar->showMessage(msg, 3000);
 
     // 👉 Nuevo mensaje instructivo temático:
-    log("✨ Ahora elige las direcciones de movimiento para cada dado.");
-    log("➡️  Usa los menús desplegables para Dado 1 y Dado 2, luego haz clic en 'Mover'.");
+    log("Ahora elige las direcciones de movimiento para cada dado.");
+    log("Usa los menús desplegables para Dado 1 y Dado 2, luego haz clic en 'Mover'.");
 }
 
 
