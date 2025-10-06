@@ -1,11 +1,11 @@
 {
     "atk": 1,
     "floor": 1,
-    "hp": 3,
+    "hp": 1,
     "maxHp": 3,
     "pos": {
-        "c": 0,
-        "r": 0
+        "c": 7,
+        "r": 4
     },
-    "rollsLeft": 9
+    "rollsLeft": 7
 }

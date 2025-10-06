@@ -47,13 +47,12 @@ std::pair<int,int> Game::rollDice() {
 
 TurnResult Game::playerMove(const QString& dir1, const QString& dir2) {
     auto stepOf = [](const QString& d)->Pos {
-        if (d=="↑") return {-1,0};
-        if (d=="↓") return {1,0};
-        if (d=="←") return {0,-1};
-        if (d=="→") return {0,1};
+        if (d=="Up") return {-1,0};
+        if (d=="Down") return {1,0};
+        if (d=="Left") return {0,-1};
+        if (d=="Right") return {0,1};
         return {0,0};
     };
-
     Pos step1 = stepOf(dir1), step2 = stepOf(dir2);
 
     clearPlayerOnGrid();

@@ -1,24 +1,17 @@
 <RCC>
   <qresource prefix="/assets">
-    <!-- Audio -->
-    <file>assets/audio/music_bg.wav</file>
-    <file>assets/audio/dice.wav</file>
-    <file>assets/audio/click.wav</file>
+    <!-- 🧙‍♂️ Jugador -->
+    <file>assets/gfx/player_idle.gif</file>
+    <file>assets/gfx/player_walk.gif</file>
+    <file>assets/gfx/player_attack.gif</file>
 
-    <!-- Player -->
-    <file>assets/gfx/player/player_idle.gif</file>
-    <file>assets/gfx/player/player_walk.gif</file>
-    <file>assets/gfx/player/player_attack.gif</file>
+    <!-- 👹 Enemigos -->
+    <file>assets/gfx/enemy_idle.gif</file>
+    <file>assets/gfx/enemy_attack.gif</file>
 
-    <!-- Enemy -->
-    <file>assets/gfx/enemy/enemy_idle.gif</file>
-    <file>assets/gfx/enemy/enemy_attack.gif</file>
-
-    <!-- UI / Tiles -->
-    <file>assets/ui/tile_empty.png</file>
-    <file>assets/ui/tile_player.png</file>
-    <file>assets/ui/tile_enemy.png</file>
-    <file>assets/ui/tile_chest.png</file>
-    <file>assets/ui/tile_tavern.png</file>
+    <!-- 🗺️ Tiles y UI -->
+    <file>assets/gfx/chest.png</file>
+    <file>assets/gfx/tavern.png</file>
+    <file>assets/gfx/exit.png</file>
   </qresource>
 </RCC>
