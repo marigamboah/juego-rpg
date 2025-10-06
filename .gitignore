@@ -1,0 +1,26 @@
+# Archivos personales de Qt Creator
+*.pro.user
+*.user
+
+# Carpeta de compilación (build)
+build/
+calabozorpg/build/
+
+# Archivos binarios y temporales
+*.exe
+*.dll
+*.o
+*.obj
+*.pdb
+*.a
+*.so
+*.dylib
+
+# Autogenerados por Qt
+moc_*
+ui_*
+qrc_*
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
