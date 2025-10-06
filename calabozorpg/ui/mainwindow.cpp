@@ -1,6 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QTimer>
+#include <QTableWidget>
+#include <QAbstractItemView>
 #include <QMessageBox>
 #include <QTableWidgetItem>
 #include <QGraphicsDropShadowEffect>
@@ -357,6 +360,106 @@ void MainWindow::paintBoard() {
             paintCell(r,c);
 }
 
+void MainWindow::ensureActorLabel() {
+    if (actorLabel) return;
+    actorLabel = new QLabel(ui->table->viewport());
+    actorLabel->setText(QStringLiteral("🧝"));
+    actorLabel->setAlignment(Qt::AlignCenter);
+    actorLabel->setFont(QFont(emojiFamily.isEmpty() ? QStringLiteral("Segoe UI Emoji") : emojiFamily, 20));
+    actorLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    actorLabel->setStyleSheet("background: transparent;");
+    actorLabel->hide();
+    actorLabel->raise();
+}
+
+QRect MainWindow::cellRectPx(int r, int c) const {
+    auto *it = ui->table->item(r, c);
+    QRect vr = ui->table->visualItemRect(it); // rect relativo al viewport del QTableWidget
+    const int pad = 2;
+    vr.adjust(pad, pad, -pad, -pad);
+    return vr;
+}
+
+QVector<Pos> MainWindow::buildPathFromUI() const {
+    QVector<Pos> path;
+
+    Pos cur = game.getPlayerPos();
+    const int d1 = ui->lblD1->text().toInt();
+    const int d2 = ui->lblD2->text().toInt();
+    const QString dir1 = ui->dir1->currentText();
+    const QString dir2 = ui->dir2->currentText();
+
+    auto stepOf = [](const QString &d)->Pos {
+        if (d=="Up")    return Pos{-1, 0};
+        if (d=="Down")  return Pos{ 1, 0};
+        if (d=="Left")  return Pos{ 0,-1};
+        if (d=="Right") return Pos{ 0, 1};
+        return Pos{0,0};
+    };
+    const Pos s1 = stepOf(dir1);
+    const Pos s2 = stepOf(dir2);
+
+    auto clamp = [](int v){ return std::max(0, std::min(v, Floor::N-1)); };
+
+    // D1 pasos en dir1
+    for (int i=0; i<d1; ++i) {
+        cur.r = clamp(cur.r + s1.r);
+        cur.c = clamp(cur.c + s1.c);
+        path.push_back(cur);
+    }
+    // D2 pasos en dir2
+    for (int i=0; i<d2; ++i) {
+        cur.r = clamp(cur.r + s2.r);
+        cur.c = clamp(cur.c + s2.c);
+        path.push_back(cur);
+    }
+
+    return path;
+}
+
+void MainWindow::startAnimatedMove(const QVector<Pos> &path) {
+    if (path.isEmpty() || animating) return;
+
+    animating = true;
+    animPath  = path;
+    animIndex = 0;
+
+    // deshabilitar UI durante la animación
+    setGameControlsEnabled(false);
+
+    // redibuja tablero y muestra el “actor” flotante
+    paintBoard();
+    actorLabel->show();
+
+    // posición inicial (la real actual del jugador)
+    const Pos start = game.getPlayerPos();
+    actorLabel->setGeometry(cellRectPx(start.r, start.c));
+
+    animTimer->start();
+}
+
+void MainWindow::advanceAnimationStep() {
+    if (animIndex < 0 || animIndex >= animPath.size()) {
+        // fin: aplicar el movimiento real (combate/cofres/salida)
+        animTimer->stop();
+        actorLabel->hide();
+        animating = false;
+
+        TurnResult res = game.playerMove(ui->dir1->currentText(), ui->dir2->currentText());
+        handleTurnResult(res);
+        updateHUD();
+        paintBoard();
+
+        setGameControlsEnabled(true);
+        return;
+    }
+
+    // mueve el emoji flotante a la siguiente casilla
+    const Pos p = animPath[animIndex++];
+    actorLabel->setGeometry(cellRectPx(p.r, p.c));
+}
+
+
 // -------------------- HUD --------------------
 void MainWindow::updateHUD() {
     ui->lblFloor->setText(QString::number(game.getFloor()));
@@ -444,10 +547,27 @@ void MainWindow::onRollDice() {
 
 
 void MainWindow::onMove() {
-    handleTurnResult(game.playerMove(ui->dir1->currentText(), ui->dir2->currentText()));
-    updateHUD();
-    paintBoard();
+    if (animating) return; // evita doble clic durante animación
+
+    const int d1 = ui->lblD1->text().toInt();
+    const int d2 = ui->lblD2->text().toInt();
+    if (d1==0 && d2==0) {
+        log("Primero lanza los dados y elige direcciones para cada tramo.");
+        return;
+    }
+
+    QVector<Pos> path = buildPathFromUI();
+    if (path.isEmpty()) {
+        // sin pasos que animar → movimiento inmediato
+        handleTurnResult(game.playerMove(ui->dir1->currentText(), ui->dir2->currentText()));
+        updateHUD();
+        paintBoard();
+        return;
+    }
+
+    startAnimatedMove(path); // 👈 aquí empieza la animación casilla a casilla
 }
+
 
 void MainWindow::onSave() {
     if (game.save("savegame.json")) log("Grabas tu leyenda en el grimorio. (Partida guardada)");

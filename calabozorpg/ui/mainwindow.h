@@ -66,6 +66,21 @@ private:
     // HUD dinámico
     QProgressBar *hpBar = nullptr;
 
+    // --- Animación del jugador ---
+    QLabel *actorLabel = nullptr;
+    QTimer *animTimer = nullptr;
+    QVector<Pos> animPath;
+    int animIndex = 0;
+    bool animating = false;
+
+    // --- Helpers de animación ---
+    void ensureActorLabel();
+    QRect cellRectPx(int r, int c) const;
+    QVector<Pos> buildPathFromUI() const;
+    void startAnimatedMove(const QVector<Pos> &path);
+    void advanceAnimationStep();
+
+
     // Botones extra (barra de estado)
     QPushButton *btnCheat = nullptr;
     QPushButton *btnTutorial = nullptr;
